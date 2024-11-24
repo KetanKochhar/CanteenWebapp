@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 text-center">
+        <div class="rounded-full bg-green-100 w-20 h-20 flex items-center justify-center mx-auto">
+            <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        
+        <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+            Payment Successful!
+        </h2>
+        
+        <p class="mt-2 text-sm text-gray-600">
+            Your order has been placed successfully. You will receive a confirmation shortly.
+        </p>
+        
+        <div class="mt-4">
+            <p class="font-medium">Order ID: <%= orderId %></p>
+            <p class="text-gray-500">Amount Paid: ₹<%= amount %></p>
+        </div>
+        
+        <div class="mt-8 space-y-4">
+            <a href="/menu" 
+               class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                Order More
+            </a>
+            
+            <a href="/orders" 
+               class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                View Orders
+            </a>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %> 

@@ -1,0 +1,90 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Order #<%= order.id %></h1>
+            <span class="px-4 py-2 rounded-full 
+                <%= order.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                   order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                   'bg-red-100 text-red-800' %>">
+                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+            </span>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Customer Information</h2>
+            <p><strong>Name:</strong> <%= order.username %></p>
+            <p><strong>Email:</strong> <%= order.email %></p>
+            <p><strong>Order Date:</strong> <%= new Date(order.created_at).toLocaleString() %></p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Order Items</h2>
+            <div class="space-y-4">
+                <% items.forEach(function(item) { %>
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <div>
+                            <h3 class="font-medium"><%= item.name %></h3>
+                            <p class="text-gray-600">Quantity: <%= item.quantity %></p>
+                        </div>
+                        <p class="font-medium">₹<%= (item.price * item.quantity).toFixed(2) %></p>
+                    </div>
+                <% }); %>
+            </div>
+            <div class="mt-6 text-right">
+                <p class="text-lg font-bold">Total: ₹<%= order.total_amount %></p>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <a href="/owner/orders" class="text-orange-500 hover:text-orange-600">
+                ← Back to Orders
+            </a>
+            <div class="space-x-4">
+                <% if (order.status === 'pending') { %>
+                    <button onclick="updateOrderStatus('<%= order.id %>', 'completed')"
+                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        Mark as Completed
+                    </button>
+                    <button onclick="updateOrderStatus('<%= order.id %>', 'cancelled')"
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                        Cancel Order
+                    </button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function updateOrderStatus(orderId, status) {
+    if (!confirm(`Are you sure you want to mark this order as ${status}?`)) return;
+
+    try {
+        const response = await fetch('/owner/update-order-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId: orderId,
+                status: status
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Failed to update order status');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating order status');
+    }
+}
+</script>
+
+<%- include('../partials/footer') %> 

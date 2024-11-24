@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collage Canteen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="text-2xl font-bold text-orange-500">Collage Canteen</a>
+                <div class="flex items-center space-x-4">
+                    <% if (user) { %>
+                        <!-- <a href="/menu" class="text-gray-600 hover:text-orange-500">Menu</a>
+                        <a href="/orders" class="text-gray-600 hover:text-orange-500">My Orders</a> -->
+                        <% if (user.role === 'owner') { %>
+                            <a href="/owner/dashboard" class="text-gray-600 hover:text-orange-500">Dashboard</a>
+                        <% } %>
+                        <span class="text-gray-600">Welcome, <%= user.username %></span>
+                        <a href="/logout" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+                            Logout
+                        </a>
+                    <% } else { %>
+                        <a href="/auth" class="text-gray-600 hover:text-orange-500">Login/Register</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+</html> 

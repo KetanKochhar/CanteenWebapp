@@ -1,0 +1,128 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Shopping Cart</h1>
+            <a href="/menu" class="text-orange-500 hover:text-orange-600">
+                ← Continue Shopping
+            </a>
+        </div>
+
+        <% if (items && items.length > 0) { %>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <% items.forEach(function(item) { %>
+                    <div class="flex items-center justify-between border-b py-4">
+                        <div class="flex items-center space-x-4">
+                            <img src="<%= item.image_path %>" 
+                                 alt="<%= item.name %>" 
+                                 class="w-16 h-16 object-cover rounded">
+                            <div>
+                                <h3 class="font-medium"><%= item.name %></h3>
+                                <p class="text-gray-600">₹<%= item.price %> each</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center border rounded">
+                                <button onclick="updateQuantity(<%= item.id %>, <%= item.quantity - 1 %>)"
+                                        class="px-3 py-1 hover:bg-gray-100">-</button>
+                                <span class="px-3 py-1 border-x"><%= item.quantity %></span>
+                                <button onclick="updateQuantity(<%= item.id %>, <%= item.quantity + 1 %>)"
+                                        class="px-3 py-1 hover:bg-gray-100">+</button>
+                            </div>
+                            <p class="font-medium">₹<%= (item.price * item.quantity).toFixed(2) %></p>
+                            <button onclick="removeItem(<%= item.id %>)"
+                                    class="text-red-500 hover:text-red-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+
+                <div class="mt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-bold">Total: ₹<%= total.toFixed(2) %></span>
+                    </div>
+                    <form action="/payment" method="GET">
+                        <button type="submit" 
+                                class="block w-full text-center bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600">
+                            Proceed to Checkout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <p class="text-gray-600 mb-4">Your cart is empty</p>
+                <a href="/menu" 
+                   class="inline-block bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600">
+                    Browse Menu
+                </a>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+async function updateQuantity(itemId, quantity) {
+    try {
+        const response = await fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                itemId: itemId,
+                quantity: quantity
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Failed to update cart');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating cart');
+    }
+}
+
+async function removeItem(itemId) {
+    if (!confirm('Are you sure you want to remove this item?')) return;
+
+    try {
+        const response = await fetch('/cart/remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                itemId: itemId
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Failed to remove item');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error removing item');
+    }
+}
+
+function proceedToCheckout() {
+    window.location.href = '/payment';
+}
+</script>
+
+<%- include('partials/footer') %> 

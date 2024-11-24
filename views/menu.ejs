@@ -1,0 +1,135 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <!-- Add Orders Link -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Menu</h1>
+        <% if (user) { %>
+            <div class="flex space-x-4">
+                <a href="/cart" class="bg-white text-orange-500 px-4 py-2 rounded-md hover:bg-gray-50">
+                    <span id="cartCount" class="mr-2">
+                        <%= (typeof cart !== 'undefined' && cart) ? cart.reduce((sum, item) => sum + item.quantity, 0) : 0 %>
+                    </span>
+                    Cart
+                </a>
+                <a href="/orders" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+                    View My Orders
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" 
+         class="fixed top-4 right-4 z-50 transform transition-all duration-300 translate-y-[-100vh]">
+        <div class="px-6 py-3 rounded-md shadow-lg text-white font-medium"></div>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% menuItems.forEach(function(item) { %>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <img src="<%= item.image_path %>" 
+                     alt="<%= item.name %>" 
+                     class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2"><%= item.name %></h3>
+                    <p class="text-gray-600 mb-4"><%= item.description %></p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold">₹<%= item.price %></span>
+                        <% if (user) { %>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" 
+                                       id="quantity-<%= item.id %>" 
+                                       value="1" 
+                                       min="1" 
+                                       class="w-16 border rounded-md px-2 py-1">
+                                <button onclick="addToCart(<%= item.id %>)"
+                                        class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition duration-300">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        <% } else { %>
+                            <a href="/auth" class="text-orange-500 hover:text-orange-600">
+                                Login to Order
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</div>
+
+<script>
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast');
+    const toastContent = toast.querySelector('div');
+    
+    toastContent.textContent = message;
+    toastContent.className = `px-6 py-3 rounded-md shadow-lg text-white font-medium ${
+        isError ? 'bg-red-500' : 'bg-green-500'
+    }`;
+    
+    toast.classList.remove('translate-y-[-100vh]');
+    toast.classList.add('translate-y-0');
+    
+    setTimeout(() => {
+        toast.classList.remove('translate-y-0');
+        toast.classList.add('translate-y-[-100vh]');
+    }, 3000);
+}
+
+async function addToCart(itemId) {
+    try {
+        const quantityInput = document.getElementById(`quantity-${itemId}`);
+        const quantity = parseInt(quantityInput.value);
+        
+        if (isNaN(quantity) || quantity < 1) {
+            showToast('Please enter a valid quantity', true);
+            return;
+        }
+
+        const response = await fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                item_id: parseInt(itemId),
+                quantity: quantity
+            })
+        });
+
+        const data = await response.json();
+        console.log('Response:', data); // For debugging
+
+        if (data.success) {
+            showToast('Item added to cart successfully!');
+            
+            // Update cart count
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                cartCount.textContent = data.cartCount;
+            }
+            
+            // Reset quantity input
+            quantityInput.value = 1;
+        } else {
+            showToast(data.message || 'Failed to add item to cart', true);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error adding item to cart', true);
+    }
+}
+
+// Add input validation
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', function() {
+        if (this.value < 1) this.value = 1;
+    });
+});
+</script>
+
+<%- include('partials/footer') %>

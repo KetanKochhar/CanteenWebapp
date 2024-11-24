@@ -1,0 +1,104 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <!-- Toggle Buttons -->
+        <div class="flex mb-6">
+            <button onclick="showLogin()" 
+                    id="loginTab"
+                    class="flex-1 py-2 text-center border-b-2 border-orange-500 text-orange-500">
+                Login
+            </button>
+            <button onclick="showRegister()" 
+                    id="registerTab"
+                    class="flex-1 py-2 text-center border-b-2 border-gray-200 text-gray-500">
+                Register
+            </button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" action="/login" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 mb-2">Username</label>
+                <input type="text" name="username" required
+                       class="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-orange-500">
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-2">Password</label>
+                <input type="password" name="password" required
+                       class="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-orange-500">
+            </div>
+            <button type="submit"
+                    class="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition duration-300">
+                Login
+            </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" action="/register" method="POST" class="hidden space-y-4">
+            <div>
+                <label class="block text-gray-700 mb-2">Username</label>
+                <input type="text" name="username" required
+                       class="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-orange-500">
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-2">Email</label>
+                <input type="email" name="email" required
+                       class="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-orange-500">
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-2">Password</label>
+                <input type="password" name="password" required
+                       class="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-orange-500">
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-2">Confirm Password</label>
+                <input type="password" name="confirmPassword" required
+                       class="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-orange-500">
+            </div>
+            <button type="submit"
+                    class="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition duration-300">
+                Register
+            </button>
+        </form>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="mt-4 text-red-500 text-center">
+                <%= error %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+function showLogin() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('loginTab').classList.add('border-orange-500', 'text-orange-500');
+    document.getElementById('loginTab').classList.remove('border-gray-200', 'text-gray-500');
+    document.getElementById('registerTab').classList.add('border-gray-200', 'text-gray-500');
+    document.getElementById('registerTab').classList.remove('border-orange-500', 'text-orange-500');
+}
+
+function showRegister() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('registerTab').classList.add('border-orange-500', 'text-orange-500');
+    document.getElementById('registerTab').classList.remove('border-gray-200', 'text-gray-500');
+    document.getElementById('loginTab').classList.add('border-gray-200', 'text-gray-500');
+    document.getElementById('loginTab').classList.remove('border-orange-500', 'text-orange-500');
+}
+
+// Form validation
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const password = this.querySelector('input[name="password"]').value;
+    const confirmPassword = this.querySelector('input[name="confirmPassword"]').value;
+    
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+    }
+});
+</script>
+
+<%- include('partials/footer') %> 

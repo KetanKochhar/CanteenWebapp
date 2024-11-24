@@ -1,0 +1,106 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Order Management</h1>
+
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Order ID
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Customer
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Amount
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <% orders.forEach(function(order) { %>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="/owner/order/<%= order.id %>" 
+                                   class="text-orange-500 hover:text-orange-600">
+                                    #<%= order.id %>
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <%= order.username %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                ₹<%= order.total_amount %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <select onchange="updateOrderStatus('<%= order.id %>', this.value)"
+                                        class="rounded-md border-gray-300 shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50">
+                                    <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>
+                                        Pending
+                                    </option>
+                                    <option value="completed" <%= order.status === 'completed' ? 'selected' : '' %>>
+                                        Completed
+                                    </option>
+                                    <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>
+                                        Cancelled
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <%= new Date(order.created_at).toLocaleDateString() %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="/owner/order/<%= order.id %>" 
+                                   class="text-orange-500 hover:text-orange-600">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+async function updateOrderStatus(orderId, status) {
+    try {
+        const response = await fetch('/owner/update-order-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId: orderId,
+                status: status
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success message
+            alert('Order status updated successfully');
+        } else {
+            alert(data.message || 'Failed to update order status');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating order status');
+    }
+}
+</script>
+
+<%- include('../partials/footer') %> 

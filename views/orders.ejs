@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <div class="text-center mb-8">
+            <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <h2 class="mt-4 text-2xl font-bold text-gray-900">Payment Successful!</h2>
+            <p class="mt-2 text-gray-600">Your order has been confirmed</p>
+        </div>
+
+        <div class="border-t border-gray-200 pt-4">
+            <p class="text-gray-600">Order ID: <span class="font-medium text-gray-900">#<%= order.id %></span></p>
+            <p class="text-gray-600">Total Amount: <span class="font-medium text-gray-900">₹<%= order.total_amount %></span></p>
+            <p class="text-gray-600">Status: <span class="font-medium text-green-600">Completed</span></p>
+        </div>
+
+        <div class="mt-8">
+            <a href="/menu" class="inline-block w-full text-center bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition duration-300">
+                Return to Menu
+            </a>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %> 

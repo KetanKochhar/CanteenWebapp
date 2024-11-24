@@ -1,0 +1,116 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Order Header -->
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Order #<%= order.order_id %></h1>
+                <p class="text-sm text-gray-500"><%= order.created_at %></p>
+            </div>
+            <div>
+                <% const status = formatStatus(order.status) %>
+                <span class="px-3 py-1 rounded-full text-sm <%= status.class %>">
+                    <%= status.text %>
+                </span>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold mb-4">Order Items</h2>
+                <div class="space-y-4">
+                    <% order.items.forEach(function(item) { %>
+                        <div class="flex items-center justify-between border-b pb-4">
+                            <div class="flex items-center">
+                                <img src="<%= item.image_path %>" 
+                                     alt="<%= item.name %>" 
+                                     class="w-16 h-16 object-cover rounded-md">
+                                <div class="ml-4">
+                                    <h3 class="font-medium"><%= item.name %></h3>
+                                    <p class="text-sm text-gray-500">
+                                        Quantity: <%= item.quantity %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium">₹<%= item.price %></p>
+                                <p class="text-sm text-gray-500">
+                                    Total: ₹<%= (item.price * item.quantity).toFixed(2) %>
+                                </p>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold mb-4">Order Summary</h2>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span>₹<%= (order.total_amount / 1.05).toFixed(2) %></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">GST (5%)</span>
+                        <span>₹<%= (order.total_amount - (order.total_amount / 1.05)).toFixed(2) %></span>
+                    </div>
+                    <div class="border-t pt-2 mt-2">
+                        <div class="flex justify-between font-semibold">
+                            <span>Total</span>
+                            <span>₹<%= order.total_amount %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-6 flex justify-between">
+            <a href="/orders" 
+               class="text-orange-600 hover:text-orange-700">
+                ← Back to Orders
+            </a>
+            <% if (order.status === 'pending') { %>
+                <button onclick="cancelOrder(<%= order.order_id %>)"
+                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300">
+                    Cancel Order
+                </button>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+async function cancelOrder(orderId) {
+    if (!confirm('Are you sure you want to cancel this order?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/orders/${orderId}/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.error || 'Failed to cancel order');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error cancelling order');
+    }
+}
+</script>
+
+<%- include('partials/footer') %> 

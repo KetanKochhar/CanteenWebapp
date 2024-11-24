@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Owner Dashboard</h1>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-2">Pending Orders</h3>
+            <p class="text-3xl font-bold text-orange-500"><%= pendingOrders %></p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-2">Menu Items</h3>
+            <p class="text-3xl font-bold text-orange-500"><%= menuItems.length %></p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="/owner/orders" 
+           class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300">
+            <h3 class="text-lg font-semibold mb-2">Manage Orders</h3>
+            <p class="text-gray-600">View and manage customer orders</p>
+        </a>
+        <a href="/owner/menu" 
+           class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300">
+            <h3 class="text-lg font-semibold mb-2">Manage Menu</h3>
+            <p class="text-gray-600">Add, edit, or remove menu items</p>
+        </a>
+    </div>
+</div>
+
+<%- include('../partials/footer') %> 

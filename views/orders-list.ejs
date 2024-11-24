@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">My Orders</h1>
+
+    <% if (orders && orders.length > 0) { %>
+        <div class="space-y-4">
+            <% orders.forEach(function(order) { %>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600">Order #<%= order.id %></p>
+                            <p class="font-medium">₹<%= order.total_amount %></p>
+                            <p class="text-sm text-gray-500">
+                                <%= new Date(order.created_at).toLocaleDateString() %>
+                            </p>
+                        </div>
+                        <div>
+                            <span class="px-3 py-1 rounded-full text-sm
+                                <%= order.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                   order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                   'bg-gray-100 text-gray-800' %>">
+                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                            </span>
+                        </div>
+                    </div>
+                    <a href="/orders/<%= order.id %>" 
+                       class="mt-4 inline-block text-orange-500 hover:text-orange-600">
+                        View Details →
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div class="text-center py-12">
+            <p class="text-gray-500">No orders found</p>
+            <a href="/menu" 
+               class="mt-4 inline-block bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                Browse Menu
+            </a>
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %> 
